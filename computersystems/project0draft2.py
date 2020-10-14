@@ -1,14 +1,14 @@
 # get file name
-name = input("What is the name of your file?")
+name = input("What is the name and location of your file?")
 
-# get directory
-directory = input("What is the directory called?")
+# make output name
+output = name[:-3] + ".out"
 
 # input directorylocation/<filename>.in
 # current functionality: opens file, reads file, writes contents of file to output, removes empty spaces and
 # single line output, saves output to output file
 
-with open(directory+"/"+name+"a", "w") as output, open(directory+"/"+name,"r") as data:
+with open(output, "w") as output, open(name,"r") as data:
     lines = data.readlines()
     comment = False
     # for loop iterates through each line in document
