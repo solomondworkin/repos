@@ -4,20 +4,21 @@ name = input("What is the name and location of your file?")
 # make output name
 output = name[:-3] + ".out"
 
-# input directorylocation/<filename>.in
-# current functionality: opens file, reads file, writes contents of file to output, removes empty spaces and
-# single line output, saves output to output file
-
+# reads the file and writes to the output file
 with open(output, "w") as output, open(name,"r") as data:
     lines = data.readlines()
     comment = False
     # for loop iterates through each line in document
     for line in lines:
+        # removes single line comments
         l = line.split("//")
+        # removes blank spaces, tabs
         l[0] = l[0].replace(" ", "").replace("\t", "")
+        # removes empty lines
         if len(l) > 1:
             l[0] += "\n"
         character = 0
+        #indicates multi-line comment structure
         begin_comment = "/*"
         end_comment = "*/"
         # while loop iterates through each character in each line

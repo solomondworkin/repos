@@ -2,7 +2,7 @@
    The rectangle is 16 pixels wide and R0 pixels high. */
 
 (KBDLOOP)
-    @KBD     // loop until key is pressed
+    @K BD     // loop until key is pressed
     D=M
     @KBDLOOP
     D;JEQ
