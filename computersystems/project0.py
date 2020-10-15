@@ -18,7 +18,7 @@ with open(output, "w") as output, open(name,"r") as data:
         if len(l) > 1:
             l[0] += "\n"
         character = 0
-        #indicates multi-line comment structure
+        # indicates multi-line comment structure
         begin_comment = "/*"
         end_comment = "*/"
         # while loop iterates through each character in each line
