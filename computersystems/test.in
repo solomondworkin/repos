@@ -1,12 +1,14 @@
-/* Draws a rectangle at the top-left corner of the screen.
-   The rectangle is 16 pixels wide and R0 pixels high. */
+/* Draws the
+     rectangle */
 
 (KBDLOOP)
-    @K BD     // loop until key is pressed
-    D=M
-    @KBDLOOP
-    D;JEQ
+   @KBD   // loop until key pressed
+   D=M
+   aaa
 
-    @50     // setup: rect will be 50 high
-    D=A
-    @R0
+   d;JEQ
+
+    @50A   //setup?
+
+  D=A
+	asasas
