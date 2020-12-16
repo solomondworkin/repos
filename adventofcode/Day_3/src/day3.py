@@ -37,21 +37,36 @@ def solution_part_one():
     return(output)
 
 
-def line_search(x_move, y_move):
+def line_search(y_move, x_move):
 
     inpt = open("input", "r")
     lines = inpt.readlines()
-    line_number = 0
-    column_number = 0
+    line_number = x_move
+    column_number = y_move
+    output = 0
 
-    while line_number < len(lines):
-        
+    for line in lines:
+
+        if line_number != lines.index(line):
+            continue
+
+        line = line[:-1]
+        print(line)
+        line_number += x_move
+  
+        while column_number+1 > len(line):
+            line += line
+
+        if line[column_number] == "#":
+            output += 1    
+
+        column_number += y_move
+
+    print(output)
+    return(output)
 
 
+#solution_part_one()
 
-
-solution_part_one()
-
-solution_part_two()
-
+print(line_search(1,1) * line_search(3,1) * line_search(5,1) * line_search(7,1) * line_search(1,2))
 
