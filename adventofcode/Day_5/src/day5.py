@@ -94,6 +94,17 @@ def solution_part_two():
     columns = column_number(list_ids)
 
 
+    column_decision = [0] * 129
+    row_decision = [0] * 8
+
+    for value in columns:
+        column_decision[value] += 1
+
+    for value in rows:
+        row_decision[value] += 1
+
+    print(row_decision)
+    print(column_decision)
                 
 
 
