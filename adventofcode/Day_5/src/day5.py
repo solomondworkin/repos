@@ -32,7 +32,6 @@ def row_number(list_passes):
         output.append(top)
 
 
-#    print(output)
     return output
 
 def column_number(list_passes):
@@ -53,7 +52,6 @@ def column_number(list_passes):
         output.append(top)
 
 
-#    print(output)
     return output
 
 
@@ -72,8 +70,27 @@ def seat_id(row, column):
         output.append(seat_number)
         i += 1
 
-#    print(output)
     return output
+
+
+def seats_taken(rows, columns):
+
+    row_dictionary = {}
+    column_dictionary = {}
+
+    for row in rows:
+        if row in row_dictionary:
+            row_dictionary[row] = row_dictionary[row] + 1
+        if row not in row_dictionary:
+            row_dictionary[row] = 1
+
+    for column in columns:
+        if column in column_dictionary:
+            column_dictionary[column] = column_dictionary[column] + 1
+        if column not in column_dictionary:
+            column_dictionary[column] = 1
+
+    return row_dictionary, column_dictionary
 
 
 
@@ -93,19 +110,18 @@ def solution_part_two():
     rows = row_number(list_ids)
     columns = column_number(list_ids)
 
+    dict_rows, dict_columns = seats_taken(rows, columns)
+    
+    row_answer = min(dict_rows, key = dict_rows.get)
+    column_answer = min(dict_columns, key = dict_columns.get)
 
-    column_decision = [0] * 129
-    row_decision = [0] * 8
+    for i in dict_rows:
+        print(dict_rows.get(i), i)
 
-    for value in columns:
-        column_decision[value] += 1
+    for i in dict_columns:
+        print(dict_columns.get(i), i)
 
-    for value in rows:
-        row_decision[value] += 1
-
-    print(row_decision)
-    print(column_decision)
-                
+    print(row_answer * 8 + column_answer)                
 
 
 

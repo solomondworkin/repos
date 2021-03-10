@@ -56,7 +56,9 @@ with open("intermediate", "w") as output, open(filename,"r") as data:
 '''
 
 input_file = open("intermediate", "r")
-output_file = open("output.hack", "w")
+output_name = filename[:-2] + "asm"
+output_file = open(output_name, "w")
+#output_file = open("output.asm", "w")
 lines = input_file.readlines()
 
 # Arithmetic stuff
@@ -64,21 +66,18 @@ i = 0
 arithmetic = ["add", "sub", "neg", "and", "not", "eq", "gt", "lt", "or"]
 push = ["local", "argument", "this", "that", "static", "temp", "pointer", "constant"]
 
-
-### (1) What is the type of command? pop, push, or arithmetic?
-
 text = ""
 
 for line in lines:
 
-    for key in arithmetic:
-
+    # this translates arithmetic instructions    
+    for key in arithmetic:  
         if key in line:
 
             if key == "add":
-                text += "@SP\nAM=M-1\nD=M\nA=A-1\nM=D+M\n@SP\nM=M-1\n"
+                text += "@SP\nAM=M-1\nD=M\n@SP\nAM=M-1\nM=D+M\n@SP\nM=M+1\n"
             if key == "sub":
-                text += "@SP\nAM=M-1\nD=M\nA=A-1\nM=M-D\n@SP\nM=M-1\n"
+                text += "@SP\nAM=M-1\nD=M\n@SP\nAM=M-1\nM=M-D\n@SP\nM=M+1\n"
             if key == "neg":
                 text += "@SP\nA=M-1\nM=-M\n"
             if key ==  "and":
@@ -97,7 +96,7 @@ for line in lines:
             if key == "or":
                 text += "@SP\nA=M-1\nD=M\n@SP\nA=M-1\nM=D|M\n"
 
-
+    # this translates push instructions
     if "push" in line:
 
         segment = line.split()[1]
@@ -109,16 +108,17 @@ for line in lines:
         if segment == "argument":
             text += "@ARG\nD=M\n@" + index + "\nA=D+A\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
         if segment == "this":
-            text += "@THIS\nD=M\n@" + index + "\nA=D+A\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
+            text += "@" + index + "\nD=A\n@THIS\nA=M+D\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
         if segment == "that":
-            text += "@THAT\nD=M\n@" + index + "\nA=D+A\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
+            text +=  "@" + index + "\nD=A\n@THAT\nA=M+D\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
         if segment == "temp":
             text += "@5\nD=A\n@" + index + "\nA=D+A\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
         if segment == "pointer":
             text += "@3\nD=A\n@" + index + "\nA=D+A\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
         if segment == "static":
-            text += "@" + filename[:2] + index + "\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
+            text += "@" + filename[:-2] + index + "\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n"
 
+    # this translates pop instructions
     if "pop" in line:
 
         segment = line.split()[1]
@@ -126,55 +126,21 @@ for line in lines:
         if segment == "local":
             text += "@LCL\nD=M\n@" + index + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R13\nA=M\nM=D\n"
         if segment == "argument":
-            text += "@ARG\nD=M@" + index + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R13\nA=M\nM=D\n"
+            text += "@ARG\nD=M\n@" + index + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R13\nA=M\nM=D\n"
         if segment == "this":
-            text += "@THIS\nD=M@" + index + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R13\nA=M\nM=D\n"
+            text += "@THIS\nD=M\n@" + index + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R13\nA=M\nM=D\n"
         if segment == "that":
-            text += "@THAT\nD=M@" + index + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R13\nA=M\nM=D\n"
+            text += "@THAT\nD=M\n@" + index + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R13\nA=M\nM=D\n"
         if segment == "temp":
             text += "@5\nD=A\n@" + index + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R13\nA=M\nM=D\n"
         if segment == "pointer":
             text += "@3\nD=A\n@" + index + "\nD=D+A\n@R13\nM=D\n@SP\nAM=M-1\nD=M\n@R13\nA=M\nM=D\n"
         if segment == "static":
-            text += "@SP\n@A=M-1\nD=M\n@" + filename[:2] + index + "\nM=D\n@SP\nM=M-1"
+            text += "@SP\nAM=M-1\nD=M\n@" + filename[:-2] + index + "\nM=D\nD"
 
-        #if action == "static":
-        #    text += memory.get("static")
-        #if text += things
-    #if ""
-
+      
 output_file.write(text)
-#os.remove("intermediate")
+os.remove("intermediate")
 
-## line.partition(" ")[0]
-
-
-### (2) What is the type of 
-
-# pop segment i
-# push segment i
-
-
-# add
-
-# sub
-# neg
-# and
-# not
-# eq
-# gt
-# lt
-# or
-
-# Memory stuff
-
-# local
-# argument
-# this
-# that
-# static
-# temp
-# pointer
-# constant
 
 
